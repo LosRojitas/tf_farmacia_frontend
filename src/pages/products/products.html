@@ -94,7 +94,7 @@
 
   <script>
     (async () => {
-      const res = await fetch('/public/layouts/app.html');
+      const res = await fetch('/tf_farmacia_frontend/public/layouts/app.html');
       if (!res.ok) { document.body.innerHTML = '<p style="padding:24px">No se pudo cargar el layout.</p>'; return; }
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html,'text/html');
