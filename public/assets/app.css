@@ -188,7 +188,7 @@ nav ol li:last-child{color:var(--gray-900);}
   width: 96px;                  
   height: 40px;                
   border-radius: .6rem;
-  background: url("/public/assets/images/logo.jpg") center/contain no-repeat;
+  background: url("/tf_farmacia_frontend/public/assets/images/logo.jpg") center/contain no-repeat;
   background-color: #fff;      
   box-shadow: 0 3px 10px rgba(0,0,0,.25);
 }
