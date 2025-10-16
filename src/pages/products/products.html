@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Productos</title>
+</head>
+<body>
+  <template id="content">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold tracking-tight">Productos</h1>
+      <nav class="mt-1 text-sm text-gray-500">
+        <ol class="flex items-center gap-2">
+          <li>Gestión de Inventario</li>
+          <li class="opacity-50">/</li>
+          <li class="text-gray-900">Productos</li>
+        </ol>
+      </nav>
+    </header>
+
+    <section id="products-view" class="bg-white rounded-2xl shadow-card ring-1 ring-gray-200">
+      <div class="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between gap-4">
+        <h2 class="text-base font-medium">Listado</h2>
+        <button id="btn-open-modal" class="btn btn-green">
+          Nuevo <span class="ml-1">+</span>
+        </button>
+      </div>
+
+      <div class="px-2 sm:px-4 pb-4">
+        <div class="overflow-x-auto">
+          <table class="min-w-[900px] w-full text-sm">
+            <thead class="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">ID</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Producto</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Categoría</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Desc. Categoría</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Cantidad</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Procedencia</th>
+                <th class="px-3 py-3 text-center font-semibold uppercase tracking-wide text-gray-600">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody" class="divide-y divide-gray-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div id="modal-add" class="modal" aria-hidden="true">
+      <div class="modal__backdrop" data-close="true"></div>
+
+      <div class="modal__panel">
+        <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal__header">
+            <h3 id="modal-title">Nuevo producto</h3>
+            <button id="btn-close-modal" class="modal__close" aria-label="Cerrar">✕</button>
+          </div>
+
+          <div class="modal__body">
+            <div class="form-row">
+              <label class="label">Nombre del producto</label>
+              <input class="input" type="text" placeholder="Paracetamol 500mg" />
+            </div>
+
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="label">Tipo de categoría</label>
+                <input class="input" type="text" placeholder="Pastillas" />
+              </div>
+              <div class="form-row">
+                <label class="label">Cantidad</label>
+                <input class="input" type="number" min="0" step="1" placeholder="0" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="label">Descripción categoría</label>
+              <input class="input" type="text" placeholder="Medicamento" />
+            </div>
+
+            <div class="form-row">
+              <label class="label">Procedencia</label>
+              <input class="input" type="text" placeholder="Laboratorio" />
+            </div>
+          </div>
+
+          <div class="modal__footer">
+            <button class="btn btn-ghost" data-close="true">Cancelar</button>
+            <button class="btn btn-brand" disabled>Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (async () => {
+      const res = await fetch('/public/layouts/app.html');
+      if (!res.ok) { document.body.innerHTML = '<p style="padding:24px">No se pudo cargar el layout.</p>'; return; }
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html,'text/html');
+      doc.getElementById('page-content').innerHTML = document.getElementById('content').innerHTML;
+      document.open(); document.write(doc.documentElement.outerHTML); document.close();
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal   = document.getElementById('modal-add');
+      const openBtn = document.getElementById('btn-open-modal');
+      const closeBtn= document.getElementById('btn-close-modal');
+
+      if (!modal || !openBtn) return;
+
+      const open = () => { modal.classList.add('is-open'); document.body.classList.add('modal-open'); };
+      const close= () => { modal.classList.remove('is-open'); document.body.classList.remove('modal-open'); };
+
+      openBtn.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', close));
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    });
+  </script>
+</body>
+</html>

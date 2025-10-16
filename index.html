@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="description" content="TU SALUD – Login"/>
+  <meta name="author" content="Dataservicios Solutions"/>
+  <title>Login | TU SALUD</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css"/>
+
+  <link rel="stylesheet" href="../src/pages/login/login.css">
+</head>
+<body>
+  <div class="login-img">
+    <div id="global-loader" aria-hidden="true">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="page">
+      <div class="col col-login mx-auto">
+        <div class="text-center">
+          <h1 class="brand text-black semibold-text">TU SALUD</h1>
+        </div>
+      </div>
+
+      <div class="container-login100">
+        <div class="wrap-login100 p-0">
+          <div class="card-body">
+            <form class="login100-form validate-form" novalidate>
+              <span class="login100-form-title">Login</span>
+
+              <div class="wrap-input100 validate-input" data-bs-validate="Valid email is required: ex@abc.xyz">
+                <input id="email" class="input100 form-control" type="email" name="email" placeholder="Correo Electrónico" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100" aria-hidden="true">
+                  <i class="zmdi zmdi-email"></i>
+                </span>
+              </div>
+
+              <div class="wrap-input100 validate-input" data-bs-validate="Password is required">
+                <input id="password" class="input100 form-control" type="password" name="password" placeholder="Contraseña" required>
+                <span class="focus-input100"></span>
+                <span class="symbol-input100" aria-hidden="true">
+                  <i class="zmdi zmdi-lock"></i>
+                </span>
+              </div>
+
+              <div class="container-login100-form-btn">
+                <!-- Botón con loader -->
+                <button type="button" class="login100-form-btn btn-primary" id="btn-login" aria-live="polite">
+                  <span class="btn__spinner" aria-hidden="true"></span>
+                  <span class="btn__label">Iniciar Sesión</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card-footer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('btn-login');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+
+      const TARGET = '/src/pages/products/products.html';
+
+      btn.addEventListener('click', () => {
+        if (!email.checkValidity() || !password.checkValidity()) {
+          email.reportValidity();
+          password.reportValidity();
+          return;
+        }
+
+        if (btn.classList.contains('is-loading')) return;
+
+        btn.classList.add('is-loading');
+        btn.setAttribute('disabled', 'disabled');
+        btn.setAttribute('aria-busy', 'true');
+
+        setTimeout(() => {
+          window.location.href = TARGET;
+        }, 3000);
+      });
+    })();
+  </script>
+</body>
+</html>

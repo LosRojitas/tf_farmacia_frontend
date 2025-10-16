@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TF-FARMACIA</title>
+
+  <base href="/" />
+
+  <link rel="stylesheet" href="/public/assets/app.css" />
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+  <div class="min-h-dvh">
+    <header class="bg-brand header-shadow">
+      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center">
+        <div class="brand-banner" role="img" aria-label="TF-FARMACIA"></div>
+      </div>
+    </header>
+
+    <main id="page-content" class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8"></main>
+
+    <footer class="mt-10 border-t border-gray-200 bg-white">
+      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 text-sm text-gray-500">
+        © <span id="y"></span> TF-FARMACIA
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+
+  <script type="module" src="/src/index.js"></script>
+</body>
+</html>
