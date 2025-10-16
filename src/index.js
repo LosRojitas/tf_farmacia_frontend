@@ -1,5 +1,4 @@
-// src/index.js
-import '/tf_farmacia_frontend/src/pages/login/login.js'; // lo que ya tienes
+import '/tf_farmacia_frontend/src/pages/login/login.js';
 
 function boot() {
   const hook = document.getElementById('products-view');

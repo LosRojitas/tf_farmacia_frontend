@@ -21,7 +21,7 @@ export async function initProducts() {
   const tbody = document.getElementById('products-tbody');
   if (!tbody) return;
 
-  const API = 'http://localhost:8080/producto/listar';
+  const API = 'http://tffarmaciabackend-production.up.railway.app/producto/listar';
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
   );
