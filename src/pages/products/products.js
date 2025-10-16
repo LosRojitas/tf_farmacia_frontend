@@ -1,3 +1,33 @@
+const API_BASE = 'https://tffarmaciabackend-production.up.railway.app';
+const URLS = {
+  listProducts: `${API_BASE}/producto/listar`,
+  listCategories: `${API_BASE}/categoria/listarcategoria`,
+  saveProduct: `${API_BASE}/producto/guardarproducto`,
+};
+
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+);
+
+let memCats = null;
+const CATS_CACHE_KEY = 'ts_cats_cache_v1';
+const CATS_TTL_MS = 60 * 60 * 1000;
+
+function getCatsFromStorage() {
+  try {
+    const raw = localStorage.getItem(CATS_CACHE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (Date.now() - obj.ts > CATS_TTL_MS) return null;
+    return obj.data;
+  } catch { return null; }
+}
+function saveCatsToStorage(data) {
+  try {
+    localStorage.setItem(CATS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch {}
+}
+
 function wireModalUI() {
   const modal = document.getElementById('modal-add');
   const btnOpen = document.getElementById('btn-open-modal');
@@ -5,30 +35,78 @@ function wireModalUI() {
 
   if (!modal || !btnOpen) return;
 
-  const open = () => { modal.classList.add('is-open'); document.body.classList.add('modal-open'); };
-  const close = () => { modal.classList.remove('is-open'); document.body.classList.remove('modal-open'); };
+  const open = async () => {
+    modal.classList.add('is-open'); 
+    document.body.classList.add('modal-open');
+    await ensureCategoriesLoaded();
+  };
+  const close = () => {
+    modal.classList.remove('is-open'); 
+    document.body.classList.remove('modal-open');
+  };
 
   btnOpen.addEventListener('click', open);
   btnClose?.addEventListener('click', close);
   modal.addEventListener('click', (e) => { if (e.target.dataset.close) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  const form = document.getElementById('form-producto');
+  const btnSave = document.getElementById('btn-save');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await saveProduct(form, btnSave, close);
+  });
 }
 
-export async function initProducts() {
-  wireModalUI();
+function fillCategoriesSelect(select, cats) {
+  select.innerHTML = [
+    '<option value="" disabled selected>Seleccione una categoría</option>',
+    ...cats.map(c => `<option value="${esc(c.id)}">${esc(c.tipo_categoria ?? c.nombre ?? 'Sin nombre')}</option>`)
+  ].join('');
+}
 
+async function ensureCategoriesLoaded() {
+  const select = document.getElementById('sel-categoria');
+  if (!select) return [];
+
+  if (memCats && Array.isArray(memCats) && memCats.length) {
+    fillCategoriesSelect(select, memCats);
+    return memCats;
+  }
+
+  const cached = getCatsFromStorage();
+  if (cached && Array.isArray(cached) && cached.length) {
+    memCats = cached;
+    fillCategoriesSelect(select, memCats);
+    return memCats;
+  }
+
+  select.innerHTML = '<option selected disabled>Cargando categorías…</option>';
+  select.disabled = true;
+
+  try {
+    const res = await fetch(URLS.listCategories, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const cats = await res.json();
+    memCats = Array.isArray(cats) ? cats : [];
+    saveCatsToStorage(memCats);
+    fillCategoriesSelect(select, memCats);
+  } catch (err) {
+    select.innerHTML = '<option selected disabled>Error cargando categorías</option>';
+    console.error('Categorías:', err);
+  } finally {
+    select.disabled = false;
+  }
+  return memCats || [];
+}
+
+async function loadProducts() {
   const tbody = document.getElementById('products-tbody');
   if (!tbody) return;
-
-  const API = 'https://tffarmaciabackend-production.up.railway.app/producto/listar';
-  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) =>
-    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
-  );
-
   tbody.innerHTML = `<tr><td colspan="7" class="px-3 py-3 text-center text-gray-600">Cargando…</td></tr>`;
 
   try {
-    const res = await fetch(API, { method: 'GET', mode: 'cors', headers: { 'Accept': 'application/json' } });
+    const res = await fetch(URLS.listProducts, { headers: { 'Accept': 'application/json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const list = await res.json();
 
@@ -56,6 +134,59 @@ export async function initProducts() {
 
     tbody.innerHTML = rows || `<tr><td colspan="7" class="px-3 py-3 text-center text-gray-600">Sin resultados</td></tr>`;
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="7" class="px-3 py-3 text-center text-gray-600">Error cargando productos: ${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="px-3 py-3 text-center text-gray-600">Error cargando productos: ${esc(e.message)}</td></tr>`;
+    console.error('Productos:', e);
   }
+}
+
+async function saveProduct(form, btnSave, closeModal) {
+  const nombre = document.getElementById('inp-nombre')?.value.trim();
+  const catId  = document.getElementById('sel-categoria')?.value;
+  const cant   = document.getElementById('inp-cantidad')?.value;
+  const proc   = document.getElementById('inp-procedencia')?.value.trim();
+  const venc   = document.getElementById('inp-vencimiento')?.value;
+
+  if (!nombre || !catId || !cant || !proc || !venc) {
+    alert('Completa todos los campos.');
+    return;
+  }
+
+  const params = new URLSearchParams({
+    nombre_producto: nombre,
+    categoriaId: catId,
+    cantidad: String(cant),
+    procedencia: proc,
+    fecha_vencimiento: venc,
+  });
+
+  btnSave.disabled = true;
+  const prev = btnSave.textContent;
+  btnSave.textContent = 'Guardando…';
+
+  try {
+    const res = await fetch(URLS.saveProduct, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const msg = await res.text();
+
+    form.reset();
+    closeModal?.();
+    await loadProducts();
+
+    alert(`✅ ${msg}`);
+  } catch (err) {
+    console.error('Guardar producto:', err);
+    alert(`❌ Error guardando: ${err.message}`);
+  } finally {
+    btnSave.disabled = false;
+    btnSave.textContent = prev;
+  }
+}
+
+export async function initProducts() {
+  wireModalUI();
+  await loadProducts();
 }

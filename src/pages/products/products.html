@@ -55,37 +55,42 @@
             <button id="btn-close-modal" class="modal__close" aria-label="Cerrar">✕</button>
           </div>
 
-          <div class="modal__body">
+          <form id="form-producto" class="modal__body" autocomplete="off">
             <div class="form-row">
-              <label class="label">Nombre del producto</label>
-              <input class="input" type="text" placeholder="Paracetamol 500mg" />
+              <label for="inp-nombre" class="label">Nombre del producto</label>
+              <input id="inp-nombre" class="input" type="text" placeholder="Paracetamol 500mg" required />
             </div>
 
             <div class="form-grid">
               <div class="form-row">
-                <label class="label">Tipo de categoría</label>
-                <input class="input" type="text" placeholder="Pastillas" />
+                <label for="sel-categoria" class="label">Categoría</label>
+                <select id="sel-categoria" class="input" required>
+                  <option selected disabled>Cargando categorías…</option>
+                </select>
               </div>
+
               <div class="form-row">
-                <label class="label">Cantidad</label>
-                <input class="input" type="number" min="0" step="1" placeholder="0" />
+                <label for="inp-cantidad" class="label">Cantidad</label>
+                <input id="inp-cantidad" class="input" type="number" min="0" step="1" placeholder="0" required />
               </div>
             </div>
 
-            <div class="form-row">
-              <label class="label">Descripción categoría</label>
-              <input class="input" type="text" placeholder="Medicamento" />
-            </div>
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="inp-vencimiento" class="label">Fecha de vencimiento</label>
+                <input id="inp-vencimiento" class="input" type="date" required />
+              </div>
 
-            <div class="form-row">
-              <label class="label">Procedencia</label>
-              <input class="input" type="text" placeholder="Laboratorio" />
+              <div class="form-row">
+                <label for="inp-procedencia" class="label">Procedencia</label>
+                <input id="inp-procedencia" class="input" type="text" placeholder="Laboratorio" required />
+              </div>
             </div>
-          </div>
+          </form>
 
           <div class="modal__footer">
             <button class="btn btn-ghost" data-close="true">Cancelar</button>
-            <button class="btn btn-brand" disabled>Guardar</button>
+            <button id="btn-save" class="btn btn-brand" form="form-producto">Guardar</button>
           </div>
         </div>
       </div>
@@ -108,12 +113,9 @@
       const modal   = document.getElementById('modal-add');
       const openBtn = document.getElementById('btn-open-modal');
       const closeBtn= document.getElementById('btn-close-modal');
-
       if (!modal || !openBtn) return;
-
       const open = () => { modal.classList.add('is-open'); document.body.classList.add('modal-open'); };
       const close= () => { modal.classList.remove('is-open'); document.body.classList.remove('modal-open'); };
-
       openBtn.addEventListener('click', open);
       closeBtn?.addEventListener('click', close);
       modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', close));
