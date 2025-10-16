@@ -1,4 +1,3 @@
-// src/pages/products/products.js
 function wireModalUI() {
   const modal = document.getElementById('modal-add');
   const btnOpen = document.getElementById('btn-open-modal');
