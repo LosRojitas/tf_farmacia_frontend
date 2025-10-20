@@ -74,6 +74,8 @@
       const TARGET = '/tf_farmacia_frontend/src/pages/products/products.html';
 
       btn.addEventListener('click', () => {
+        //verificar que los campos email y password
+        //sean validos, si no son validos, se hace report
         if (!email.checkValidity() || !password.checkValidity()) {
           email.reportValidity();
           password.reportValidity();

@@ -8,12 +8,54 @@
   <base href="/" />
 
   <link rel="stylesheet" href="/tf_farmacia_frontend/public/assets/app.css" />
+
+  <!-- estilos mínimos para el loader y fallback del spinner -->
+  <style>
+    #logout-overlay{display:none;align-items:center;justify-content:center}
+    #logout-overlay.show{display:flex}
+    .spinner {
+      width: 28px; height: 28px; border-radius: 9999px;
+      border: 3px solid #e5e7eb; border-top-color: #0d6efd;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
   <div class="min-h-dvh">
     <header class="bg-brand header-shadow">
-      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center">
+      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <div class="brand-banner" role="img" aria-label="TF-FARMACIA"></div>
+
+        <!-- menú de usuario -->
+        <div class="relative" id="user-menu-root">
+          <button
+            id="user-menu-button"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-white/90 hover:text-white hover:bg-white/10 focus:outline-none"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <span class="font-semibold">Anthony</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7 10l5 5 5-5H7z"/>
+            </svg>
+          </button>
+
+          <div
+            id="user-menu"
+            class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-40"
+            role="menu"
+            aria-labelledby="user-menu-button"
+          >
+            <button
+              id="logout-btn"
+              class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              role="menuitem"
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -26,8 +68,72 @@
     </footer>
   </div>
 
+  <div
+    id="logout-overlay"
+    class="fixed inset-0 bg-black/40 z-50"
+    aria-hidden="true"
+  >
+    <div class="bg-white rounded-xl shadow-lg px-6 py-5 flex items-center gap-3">
+      <div class="spinner"></div>
+      <div class="text-sm font-medium text-gray-700">Cerrando sesión…</div>
+    </div>
+  </div>
+
   <script>
+    // año del footer
     document.getElementById('y').textContent = new Date().getFullYear();
+
+    // simulación de logout
+    (function () {
+      const root   = document.getElementById('user-menu-root');
+      const btn    = document.getElementById('user-menu-button');
+      const menu   = document.getElementById('user-menu');
+      const logout = document.getElementById('logout-btn');
+      const overlay = document.getElementById('logout-overlay');
+
+      function openMenu() {
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+      function closeMenu() {
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      function toggleMenu() {
+        const isHidden = menu.classList.contains('hidden');
+        isHidden ? openMenu() : closeMenu();
+      }
+
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
+
+      // cerrar al hacer click fuera
+      document.addEventListener('click', (e) => {
+        if (!root.contains(e.target)) closeMenu();
+      });
+
+      // cerrar con escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+
+      // simulación de logout: loader 3s y redirección a index.html
+      logout.addEventListener('click', async (e) => {
+        e.preventDefault();
+        closeMenu();
+
+        // mostrar overlay
+        overlay.classList.add('show');
+
+        // esperar 3 segundos
+        await new Promise(r => setTimeout(r, 3000));
+
+        // redirigir a index
+        window.location.href = '/index.html';
+      });
+    })();
   </script>
 
   <script type="module" src="/tf_farmacia_frontend/src/index.js"></script>
