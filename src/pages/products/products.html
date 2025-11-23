@@ -95,6 +95,85 @@
         </div>
       </div>
     </div>
+        <div id="modal-add" class="modal" aria-hidden="true">
+      <div class="modal__backdrop" data-close="true"></div>
+
+      <div class="modal__panel">
+        <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal__header">
+            <h3 id="modal-title">Nuevo producto</h3>
+            <button id="btn-close-modal" class="modal__close" aria-label="Cerrar">✕</button>
+          </div>
+
+          <form id="form-producto" class="modal__body" autocomplete="off">
+            <div class="form-row">
+              <label for="inp-nombre" class="label">Nombre del producto</label>
+              <input id="inp-nombre" class="input" type="text" placeholder="Paracetamol 500mg" required />
+            </div>
+
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="sel-categoria" class="label">Categoría</label>
+                <select id="sel-categoria" class="input" required>
+                  <option selected disabled>Cargando categorías…</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-cantidad" class="label">Cantidad</label>
+                <input id="inp-cantidad" class="input" type="number" min="0" step="1" placeholder="0" required />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="inp-vencimiento" class="label">Fecha de vencimiento</label>
+                <input id="inp-vencimiento" class="input" type="date" required />
+              </div>
+
+              <div class="form-row">
+                <label for="inp-procedencia" class="label">Procedencia</label>
+                <input id="inp-procedencia" class="input" type="text" placeholder="Laboratorio" required />
+              </div>
+            </div>
+          </form>
+
+          <div class="modal__footer">
+            <button class="btn btn-ghost" data-close="true">Cancelar</button>
+            <button id="btn-save" class="btn btn-brand" form="form-producto">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUEVO: Modal de confirmación de eliminación -->
+    <div id="modal-confirm-delete" class="modal" aria-hidden="true">
+      <div class="modal__backdrop" data-close="true"></div>
+
+      <div class="modal__panel">
+        <div class="modal__content" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+          <div class="modal__header">
+            <h3 id="modal-confirm-title">Eliminar producto</h3>
+            <button id="btn-close-confirm" class="modal__close" aria-label="Cerrar">✕</button>
+          </div>
+
+          <div class="modal__body">
+            <p class="text-sm text-gray-700">
+              ¿Estás seguro de eliminar el producto
+              <span id="confirm-product-name" class="font-semibold"></span>?
+            </p>
+            <p class="text-xs text-gray-500 mt-2">
+              Esta acción eliminará también sus ítems asociados.
+            </p>
+          </div>
+
+          <div class="modal__footer">
+            <button class="btn btn-ghost" data-close="true">Cancelar</button>
+            <button id="btn-confirm-delete" class="btn btn-brand">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </template>
 
   <script>
