@@ -1,5 +1,5 @@
 // base de la api y rutas que usa esta pantalla
-const API_BASE = 'https://tf-farmacia-backend.onrender.com';
+const API_BASE = 'https://tffarmaciabackend-production-8e94.up.railway.app';
 const URLS = {
   listProducts: `${API_BASE}/producto/listar`,
   listCategories: `${API_BASE}/categoria/listarcategoria`,
